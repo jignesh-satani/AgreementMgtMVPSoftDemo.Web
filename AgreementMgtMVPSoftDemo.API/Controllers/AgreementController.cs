@@ -1,6 +1,7 @@
 ﻿using AgreementMgtMVPSoftDemo.DAL;
 using AgreementMgtMVPSoftDemo.Model;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,38 +17,85 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
           private readonly IGenericRepository<Agreement> _agreementRepository;
           private readonly IAgreementRepository _userAgreementsrepository;
           private readonly IUserRepository _iUserRepository;
+          private readonly IMemoryCache _memoryCache;
+          //private readonly MemoryCache _iCacheHelper;
+
           public AgreementController(IGenericRepository<ProductGroup> productGroupRepository
                , IGenericRepository<Product> productRepository
                , IGenericRepository<Agreement> agreementRepository
                , IUserRepository iUserRepository
-               , IAgreementRepository userAgreementsrepository)
+               , IAgreementRepository userAgreementsrepository
+               , IMemoryCache memoryCache
+               , ICacheHelper ICacheHelper)
           {
                _productGroupRepository = productGroupRepository;
                _productRepository = productRepository;
                _agreementRepository = agreementRepository;
                _iUserRepository = iUserRepository;
                _userAgreementsrepository = userAgreementsrepository;
+               _memoryCache = memoryCache;
+               //_iCacheHelper = ICacheHelper;
+
           }
 
-          [HttpPost("GetAgreement")]
-          public object GetAgreement(string email)
-          {
-               var productgroups = _productGroupRepository.GetAll();
-               var products = _productRepository.GetAll();
+          //[HttpPost("GetAgreement")]
+          //public object GetAgreement(string email)
+          //{
+          //     var productgroups = _productGroupRepository.GetAll();
+          //     var products = _productRepository.GetAll();
 
 
-               return new { productgroups, products };
-          }
+          //     return new { productgroups, products };
+          //}
 
           [HttpGet("GetProductGroup")]
           public IEnumerable<ProductGroup> GetProductGroup()
           {
+          //     var cacheKey = "productGroupList";
+          //     if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<ProductGroup> productGroupList))
+          //     {
+          //          //calling the server
+          //          productGroupList = _productGroupRepository.GetAll();
+
+          //          //setting up cache options
+          //          //var cacheExpiryOptions = new MemoryCacheEntryOptions
+          //          //{
+          //          //     AbsoluteExpiration = DateTime.Now.AddSeconds(50),
+          //          //     Priority = CacheItemPriority.High,
+          //          //     SlidingExpiration = TimeSpan.FromSeconds(20)
+          //          //};
+          //          var cacheExpiryOptions = new MemoryCacheEntryOptions()
+          //.SetSlidingExpiration(TimeSpan.FromSeconds(3600));
+          //          _memoryCache.Set(cacheKey, productGroupList, cacheExpiryOptions);
+          //     }
+          //     return productGroupList;
+
                return _productGroupRepository.GetAll();
+               //return _iCacheHelper.GetProductGroup(_memoryCache, _productGroupRepository);
           }
           [HttpPost("GetProduct")]
           public IEnumerable<Product> GetProduct(int groupId)
           {
+               //   var cacheKey = "productList";
+               //   if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<Product> productList))
+               //   {
+               //        //calling the server
+               //        productList = _productRepository.GetAll();
+
+               //        //setting up cache options
+               //        //var cacheExpiryOptions = new MemoryCacheEntryOptions
+               //        //{
+               //        //     AbsoluteExpiration = DateTime.Now.AddSeconds(50),
+               //        //     Priority = CacheItemPriority.High,
+               //        //     SlidingExpiration = TimeSpan.FromSeconds(20)
+               //        //};
+               //        var cacheExpiryOptions = new MemoryCacheEntryOptions()
+               //.SetSlidingExpiration(TimeSpan.FromSeconds(3600));
+               //        _memoryCache.Set(cacheKey, productList, cacheExpiryOptions);
+               //   }
+               //   return productList;
                return _productRepository.GetAll().Where(t => t.ProductGroupId == groupId);
+               //return _iCacheHelper.GetProducts(_memoryCache, _productRepository).Where(t => t.ProductGroupId == groupId);
           }
 
           [HttpPost("LoadGrid")]
@@ -88,7 +136,7 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                                    customerData = customerData.OrderByDescending(s => s.NewPrice);
                               else
                                    customerData = customerData.OrderBy(s => s.NewPrice);
-                              break;                        
+                              break;
                          case "ProductDescription":
                               if (sortColumnDir == "desc")
                                    customerData = customerData.OrderByDescending(s => s.ProductDescription);
@@ -114,7 +162,7 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
 
                //Paging
                recordsTotal = customerData.Count();
-               var data = customerData.Skip(skip).Take(pageSize).ToList();               
+               var data = customerData.Skip(skip).Take(pageSize).ToList();
 
                var user = _iUserRepository.Get(email);
                //Returning Json Data    

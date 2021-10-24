@@ -23,197 +23,12 @@
           </div>
      </div>
 </div>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
-     <div class="modal-dialog" role="document">
-          <div class="modal-content">
-               <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                         <span aria-hidden="true">&times;</span>
-                    </button>
-               </div>
-               <div class="modal-body" ng-app="myGrid">
-                    <div class="row" ng-controller="basicController">
-                         Your name:
-                         <input type="text" ng-model="milan" id="txtName">{{name}}
-
-                    </div>
-                    <div class="row">
-                         <div class="col-sm">col-sm</div>
-                         <div class="col-sm">col-sm</div>
-                         <div class="col-sm">col-sm</div>
-                    </div>
-               </div>
-               <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-               </div>
-          </div>
-     </div>
-</div>
-
-@*<script type="text/javascript" charset="utf-8">
 
 
-          $(document).ready(function () {
-
-               // get AG Grid to create an Angular module and register the AG Grid directive
-               agGrid.initialiseAgGridWithAngular1(angular);
-
-               // create your module with AG Grid as a dependency
-               var module = angular.module("myApp", ["agGrid"]);
-
-               var myApp = angular.module('myApp', []);
-               module = module.controller('myController', function ($scope) {
-                    $scope.UserName = "Jig";
-               });
-
-               var apiUrl = "https://localhost:44303/api/Login/GetUserAll";
-               var columnDefs = [
-                    { headerName: "UserName", field: "userName" },
-                    { headerName: "Email", field: "email" },
-                    { headerName: "ContactNo", field: "contactNo" },
-                    { headerName: "Company", field: "company" },
-                    { field: 'Edit', minWidth: 175, cellRenderer: 'editButtonRenderer' }
-               ];
-
-               // let the grid know which columns to use
-               var gridOptions = {
-                    columnDefs: columnDefs,
-                    components: {
-                         editButtonRenderer: EditButtonRenderer,
-                    },
-                    defaultColDef: {
-                         sortable: true,
-                         filter: true
-                    }
-               };
-
-               // lookup the container we want the Grid to use
-               var eGridDiv = document.querySelector('#myGrid');
-
-               // create the grid passing in the div to use together with the columns & data we want to use
-               new agGrid.Grid(eGridDiv, gridOptions);
-
-               agGrid.simpleHttpRequest({ url: apiUrl }).then(function (data) {
-                    gridOptions.api.setRowData(data);
-               });
-
-          });
-
-          class EditButtonRenderer {
-               // gets called once before the renderer is used
-               init(params) {
-                    // create the cell
-                    this.eGui = document.createElement('div');
-                    this.eGui.innerHTML = '<span><button class="btn-simple">Edit</button></span>';
-
-                    // get references to the elements we want
-                    this.eButton = this.eGui.querySelector('.btn-simple');
-
-                    // set value into cell
-                    //this.cellValue = this.getValueToDisplay(params);
-                    //this.eValue.innerHTML = this.cellValue;
-
-                    // add event listener to button
-                    this.eventListener = () => EditPopup(params.data);
-                    this.eButton.addEventListener('click', this.eventListener);
-               }
-
-               getGui() {
-                    return this.eGui;
-               }
-
-               // gets called whenever the cell refreshes
-               refresh(params) {
-                    // set value into cell again
-                    this.cellValue = this.getValueToDisplay(params);
-                    this.eValue.innerHTML = this.cellValue;
-
-                    // return true to tell the grid we refreshed successfully
-                    return true;
-               }
-
-               // gets called when the cell is removed from the grid
-               destroy() {
-                    // do cleanup, remove event listener from button
-                    if (this.eButton) {
-                         // check that the button element exists as destroy() can be called before getGui()
-                         this.eButton.removeEventListener('click', this.eventListener);
-                    }
-               }
-
-               getValueToDisplay(params) {
-                    return params.valueFormatted ? params.valueFormatted : params.value;
-               }
-          }
-          function EditPopup(data) {
-               myApp.controller('myController', function ($scope) {
-                    $scope.UserName = data.UserName;
-               });
-
-     //          $scope.UserName = data.UserName;
-               $("#exampleModal").modal('show');
-          }
-
-     </script>*@
 <script>
-     
+
 
      $(document).ready(function () {
-          class EditButtonRenderer {
-               // gets called once before the renderer is used
-               init(params) {
-                    // create the cell
-                    this.eGui = document.createElement('div');
-                    this.eGui.innerHTML = '<span><button class="btn-simple">Edit</button></span>';
-
-                    // get references to the elements we want
-                    this.eButton = this.eGui.querySelector('.btn-simple');
-
-                    // set value into cell
-                    //this.cellValue = this.getValueToDisplay(params);
-                    //this.eValue.innerHTML = this.cellValue;
-
-                    // add event listener to button
-                    this.eventListener = () => EditPopup(params.data);
-                    this.eButton.addEventListener('click', this.eventListener);
-               }
-
-               getGui() {
-                    return this.eGui;
-               }
-
-               // gets called whenever the cell refreshes
-               refresh(params) {
-                    // set value into cell again
-                    this.cellValue = this.getValueToDisplay(params);
-                    this.eValue.innerHTML = this.cellValue;
-
-                    // return true to tell the grid we refreshed successfully
-                    return true;
-               }
-
-               // gets called when the cell is removed from the grid
-               destroy() {
-                    // do cleanup, remove event listener from button
-                    if (this.eButton) {
-                         // check that the button element exists as destroy() can be called before getGui()
-                         this.eButton.removeEventListener('click', this.eventListener);
-                    }
-               }
-
-               getValueToDisplay(params) {
-                    return params.valueFormatted ? params.valueFormatted : params.value;
-               }
-          }
-
-          function EditPopup(data) {
-               $("#txtName").val(data.name);
-               $("#exampleModal").modal('show');
-          }
           agGrid.initialiseAgGridWithAngular1(angular);
 
           var fileBrowserModule = angular.module('myGrid', ['agGrid']);
@@ -359,8 +174,7 @@
                               { headerName: "Land-line", field: "landline", minWidth: 150, filter: 'agTextColumnFilter' },
                               { headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter' }
                          ]
-                    },
-                    { headerName: 'Edit', minWidth: 175, cellRenderer: EditButtonRenderer }
+                    }
                ];
 
                $scope.gridOptions = {
@@ -380,7 +194,7 @@
                };
 
                $scope.milan = {
-                    
+
                };
 
                function onModelUpdated() {

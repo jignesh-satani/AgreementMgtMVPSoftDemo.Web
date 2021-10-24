@@ -32,7 +32,8 @@ namespace AgreementMgtMVPSoftDemo.API
                //     builder.WithOrigins("https://localhost:44305").AllowAnyMethod().AllowAnyHeader();
                //}));
                var key = _config.GetValue<string>("JwtConfig:secret");
-
+               //services.AddMvc();
+               services.AddMemoryCache();
                services.AddDbContext<ApplicationContext>(options => options.UseSqlServer(_config.GetConnectionString("DefaultConnection")));
                services.AddSingleton<IJwtAuth>(new JwtAuth(key));
                services.AddTransient<IUserRepository, UserRepository>();
@@ -41,8 +42,10 @@ namespace AgreementMgtMVPSoftDemo.API
                services.AddTransient<IGenericRepository<Agreement>, GenericRepository<Agreement>>();
                services.AddTransient<IAgreementRepository, AgreementRepository>();
                services.AddTransient<ILoggerManager, LoggerManager>();
+               services.AddTransient<ICacheHelper, CacheHelper>();
 
                services.AddControllers().AddNewtonsoftJson();
+               
                services.AddDistributedMemoryCache();
                services.AddSession(options =>
                {

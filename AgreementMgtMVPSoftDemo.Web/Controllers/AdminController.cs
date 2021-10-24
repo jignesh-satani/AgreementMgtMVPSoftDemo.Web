@@ -19,5 +19,10 @@ namespace AgreementMgtMVPSoftDemo.Web.Controllers
                ViewData["email"] = email;
                return View("Agreement");
           }
+
+          public void Logout()
+          {
+              //clear session and JWT token
+          }
      }
 }
