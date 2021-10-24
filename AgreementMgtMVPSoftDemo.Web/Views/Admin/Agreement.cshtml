@@ -1,0 +1,321 @@
+﻿@{
+     Layout = "~/Views/Admin/_adminLayout.cshtml";
+     ViewData["Title"] = "Agreement";
+}
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+<style>
+     #customerBody label {
+          font-weight: bold;
+     }
+</style>
+
+<input type="hidden" id="hdEmail" value="@ViewData["email"]" />
+<input type="hidden" id="hdUserId" />
+<input type="hidden" id="hdId" />
+<div class="row">
+     <div class="col-lg-12">
+          <div class="card">
+               <div class="card-body">
+                    <button type="button" class="btn btn-secondary" id="btnAdd">Add Agreement</button>
+                    <table id="demoGrid" class="table table-striped table-bordered dt-responsive nowrap"
+                           width="100%" cellspacing="0">
+                         <thead>
+                              <tr>
+                                   <th>Id</th>
+                                   <th>UserId</th>
+                                   <th>ProductId</th>
+                                   <th>ProductNumber</th>
+                                   <th>ProductGroupId</th>
+                                   <th>GroupCode</th>
+
+                                   <th>FirstName</th>
+                                   <th>LastName</th>
+                                   <th>Email</th>
+
+                                   <th>EffectiveDate</th>
+                                   <th>ExpirationDate</th>
+                                   <th>ProductDescription</th>
+                                   <th>ProductPrice</th>
+                                   <th>GroupDescription</th>
+                                   <th>NewPrice</th>
+
+                                   <th>Edit</th>
+                                   <th>Delete</th>
+                              </tr>
+                         </thead>
+                    </table>
+
+               </div>
+               <!-- end card body -->
+          </div>
+          <!-- end card -->
+     </div>
+     <!-- end col -->
+</div>
+
+<div class="modal fade" id="agreementModal" tabindex="-1"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+     <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+               <div class="modal-header">
+                    <h5 class="modal-title" id="agreementModalLabel">Edit Agreement</h5>                   
+               </div>
+               <div class="modal-body" id="customerBody">
+
+                    <div class="row">
+                         <div class="col-lg-8">
+                              <form>
+                                   <div class="form-group">
+                                        <label id="lblFirstName">Product Group</label>
+                                        <select id="ddlGroup" class="form-control">
+                                        </select>
+                                   </div>
+                                   <div class="form-group">
+                                        <label id="lblFirstName">Product</label>
+                                        <select id="ddlProduct" class="form-control">
+                                        </select>
+                                   </div>
+                                   <div class="form-group">
+                                        <label>Product Price</label>
+                                        <label id="lblProductPrice" class="form-control"></label>
+                                   </div>
+                                   <div class="form-group">
+                                        <label>New Price</label>
+                                        <input type="text" id="txtNewPrice" class="form-control" />
+                                   </div>
+                                   <div class="form-group">
+                                        <label>Effective Date</label>
+                                        @*<div class="input-group date" id="txtEFDate" data-target-input="nearest">
+                                             <input type="text" class="form-control datetimepicker-input" data-target="#txtEFDate">
+                                             <div class="input-group-append" data-target="#txtEFDate" data-toggle="datetimepicker">
+                                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                             </div>
+                                        </div>*@
+                                        <input type="text" name="txtEFDate" id="txtEFDate" class="form-control datepicker" />
+                                   </div>
+                                   <div class="form-group">
+                                        <label>ExpirationDate</label>
+                                        @*<div class="input-group date" id="txtEXDate" data-target-input="nearest">
+                                             <input type="text" class="form-control datetimepicker-input" data-target="#txtEXDate">
+                                             <div class="input-group-append" data-target="#txtEXDate" data-toggle="datetimepicker">
+                                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                             </div>
+                                        </div>*@
+                                        <input type="text" name="txtEXDate" id="txtEXDate" class="form-control datepicker" />
+                                   </div>
+                              </form>
+                         </div>
+                    </div>
+
+
+               </div>
+               <div class="modal-footer">
+                    <input type="hidden" id="hdCustomerId" />
+                    <button type="button" class="btn btn-secondary" id="btnSave">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+               </div>
+          </div>
+     </div>
+
+</div>
+
+<script>
+     var apiURL = "http://localhost:56802/api";
+
+     function BindProductGroup() {
+          $.ajax({
+               type: 'GET',
+               url: apiURL + "/Agreement/GetProductGroup",
+               dataType: 'json',
+               success: function (result) {
+                    $.each(result, function () {
+                         $("#ddlGroup").append('<option value="' + this.id + '">' + this.groupDescription + '</option>');
+                    });
+               }
+          });
+     }
+     function BindProduct(id) {
+          $.ajax({
+               type: 'POST',
+               url: apiURL + "/Agreement/GetProduct?groupId=" + id,
+               dataType: 'json',
+               success: function (result) {
+                    $("#ddlProduct").html('');
+                    $.each(result, function () {
+                         $("#ddlProduct").append('<option price="' + this.price + '" value="' + this.id + '">' + this.productDescription + '</option>');
+                    });
+
+                    
+               }
+          });
+     }
+     $(document).ready(function () {
+          //$('.datepicker').datepicker({
+          //     format: 'mm/dd/yyyy',
+          //     startDate: '-3d'
+          //});              
+
+          //$('#txtEFDate').datetimepicker({
+          //     format: 'L'
+          //});
+          //$('#txtEXDate').datetimepicker({
+          //     format: 'L'
+          //});
+
+          $('input[name="txtEFDate"]').daterangepicker({
+               singleDatePicker: true,
+               showDropdowns: true,
+               minYear: 1901,
+               maxYear: parseInt(moment().format('YYYY'), 10)
+          });
+
+          $('input[name="txtEXDate"]').daterangepicker({
+               singleDatePicker: true,
+               showDropdowns: true,
+               minYear: 1901,
+               maxYear: parseInt(moment().format('YYYY'), 10)
+          });
+
+          var url = apiURL + "/Agreement/LoadGrid?email=" + $("#hdEmail").val();
+          BindProductGroup();
+          $("#demoGrid").DataTable({
+
+               "processing": true, // for show progress bar
+               "serverSide": true, // for process server side
+               "filter": true, // this is for disable filter (search box)
+               "orderMulti": false, // for disable multiple column at once
+               "pageLength": 5,
+               "language": {
+                    "search": "Saerch by user:"
+               },
+               "scrollX": true,
+               "ajax": {
+                    "url": url,
+                    "type": "POST",
+                    "crossDomain": true,
+                    "datatype": "json",
+                    "dataSrc": function (json) {                        
+                         $("#hdUserId").val(json.aspNetUser.id);                         
+                         return json.data;
+                    },
+                    error: function (xhr, error, code) {
+                         console.log(xhr);
+                         console.log(code);
+                    }
+               },         
+               "columns": [
+                    { "data": "id", "name": "Id", "autoWidth": true, "visible": false },
+                    { "data": "userId", "name": "UserId", "autoWidth": true, "visible": false },
+                    { "data": "productId", "name": "ProductId", "autoWidth": true, "visible": false },
+                    { "data": "productNumber", "name": "ProductNumber", "autoWidth": true, "visible": false },
+                    { "data": "productGroupId", "name": "ProductGroupId", "autoWidth": true, "visible": false },
+                    { "data": "groupCode", "name": "GroupCode", "autoWidth": true, "visible": false },
+
+                    { "data": "firstName", "title": "First Name", "name": "FirstName", "autoWidth": true },
+                    { "data": "lastName", "title": "Last Name", "name": "LastName", "autoWidth": true },
+                    { "data": "email", "title": "Email", "name": "Email", "autoWidth": true },
+                    { "data": "effectiveDate", "title": "Effective Date", "name": "EffectiveDate", "autoWidth": true },
+                    { "data": "expirationDate", "title": "Expiration Date", "name": "ExpirationDate", "autoWidth": true },
+                    { "data": "productDescription", "title": "Product", "name": "ProductDescription", "autoWidth": true },
+                    { "data": "productPrice", "title": "Product Price", "name": "ProductPrice", "autoWidth": true },
+                    { "data": "groupDescription", "title": "Group", "name": "GroupDescription", "title": "GroupDescription", "autoWidth": true },
+                    { "data": "newPrice", "title": "New Price", "name": "NewPrice", "title": "NewPrice", "autoWidth": true },
+                    {
+                         "render": function (data, type, full, meta) {
+                              return '<Button id="btnEdit" type="button" class="btn btn-info" data="' + full.Id + '">Edit</Button>';
+                         }
+                    },
+                    {
+                         data: null, render: function (data, type, row) {
+                              return '<Button id="btnDelete" type="button" class="btn btn-danger" CustomerID="' + row.Id + '">Delete</a>';
+                         }
+                    }
+
+               ]
+
+          });
+
+          $(document).on('click', '#btnEdit', function () {
+               var $row = $(this).closest("tr");
+               var data = $("#demoGrid").DataTable().row($row).data();
+               $("#hdId").val(data.id);
+               $("#lblProductPrice").text(data.productPrice);
+               $("#ddlGroup").val(data.productGroupId);
+               $("#txtNewPrice").val(data.newPrice);
+               BindProduct(data.productGroupId);
+               $('#agreementModal').modal('show');
+
+          });
+
+          $(document).on('click', '#btnDelete', function () {
+               var customerID = $(this).attr("customerid");
+
+               $.ajax({
+                    type: "POST",
+                    url: '/NMHEWC/RemoveCustomer?customerID=' + customerID,
+                    //contentType: "application/json; charset=utf-8",
+                    //dataType: "json",
+                    success: function () {
+                         $('#agreementModal').modal('hide');
+                         alert("Record deleted");
+                         $('#demoGrid').DataTable().ajax.reload();
+                    },
+                    error: function () {
+                         alert('Error');
+                    }
+               });
+          });
+
+          $(document).on('click', '#btnSave', function () {
+               var message = "";
+               if ($("#hdId").val() == '0')
+                    message = "New record inserted";
+               else
+                    message = "Data updated";
+
+               var jsonData = {
+                    'Id': $("#hdId").val(),
+                    'UserId': $("#hdUserId").val(),
+                    'ProductGroupId': $("#ddlGroup").val(),
+                    'ProductId': $("#ddlProduct").val(),
+                    'EffectiveDate': $("#txtEFDate").val(),
+                    'ExpirationDate': $("#txtEXDate").val(),
+                    'NewPrice': $("#txtNewPrice").val()
+               };
+//               debugger;
+               $.ajax({
+                    type: "POST",
+                    url: apiURL + "/Agreement/SaveAgreement",
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(jsonData),
+                    dataType: "json",
+                    success: function () {
+                         $('#agreementModal').modal('hide');
+                         alert(message);
+                         $('#demoGrid').DataTable().ajax.reload();
+                    },
+                    error: function () {
+                         alert('Error');
+                    }
+               });
+          });
+
+          $(document).on('click', '#btnAdd', function () {
+               $("#hdId").val('0');
+               $('#agreementModal').modal('show');
+          });
+
+          $("#ddlGroup").change(function () {
+               BindProduct($('option:selected', this).val());
+          });
+          $("#ddlProduct").change(function () {               
+               $("#lblProductPrice").text($("#ddlProduct option:selected").attr("Price"));
+          });         
+
+     });
+
+</script>
