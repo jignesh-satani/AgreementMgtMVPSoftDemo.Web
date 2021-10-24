@@ -1,5 +1,3 @@
-using System;
-
 namespace AgreementMgtMVPSoftDemo.Web.Models
 {
      public class ErrorViewModel

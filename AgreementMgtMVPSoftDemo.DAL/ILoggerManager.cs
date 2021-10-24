@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AgreementMgtMVPSoftDemo.DAL
+﻿namespace AgreementMgtMVPSoftDemo.DAL
 {
      public interface ILoggerManager
      {
