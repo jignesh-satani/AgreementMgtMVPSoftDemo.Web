@@ -45,6 +45,7 @@ namespace AgreementMgtMVPSoftDemo.API
                services.AddTransient<IGenericRepository<ProductGroup>, GenericRepository<ProductGroup>>();
                services.AddTransient<IGenericRepository<Agreement>, GenericRepository<Agreement>>();
                services.AddTransient<IAgreementRepository, AgreementRepository>();
+               services.AddTransient<ILoggerManager, LoggerManager>();
 
                services.AddControllers().AddNewtonsoftJson();
                services.AddDistributedMemoryCache();
