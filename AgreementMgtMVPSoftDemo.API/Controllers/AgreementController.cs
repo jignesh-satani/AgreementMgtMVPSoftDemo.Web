@@ -142,8 +142,8 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                     ProductGroupId = data.ProductGroupId,
                     ProductId = data.ProductId,
                     NewPrice = data.NewPrice,
-                    EffectiveDate = data.EffectiveDate,
-                    ExpirationDate = data.ExpirationDate
+                    EffectiveDate = data.EffectiveDate.ToDateTime(),
+                    ExpirationDate = data.ExpirationDate.ToDateTime()
                };
                if (data.Id > 0)
                     _agreementRepository.Update(obj);
@@ -155,6 +155,18 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                return new JsonResult(new TokenResponse
                {
                     Message = "Save",
+                    Success = true
+               });
+          }
+
+          [HttpPost("DeleteAgreement")]
+          public IActionResult DeleteAgreement(int id)
+          {
+               _agreementRepository.Delete("Delete From Agreement Where Id = " + id.ToString());
+               _agreementRepository.Dispose();
+               return new JsonResult(new TokenResponse
+               {
+                    Message = "Record Deleted",
                     Success = true
                });
           }

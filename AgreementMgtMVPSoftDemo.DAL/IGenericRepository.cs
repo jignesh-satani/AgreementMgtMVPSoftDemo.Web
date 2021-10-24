@@ -9,7 +9,7 @@ namespace AgreementMgtMVPSoftDemo.DAL
           IEnumerable<T> GetAll();
           void Insert(T entity);
           void Update(T entity);
-          void Delete(T entity);
+          void Delete(string sql);
           void Dispose();
           void Save();
      }

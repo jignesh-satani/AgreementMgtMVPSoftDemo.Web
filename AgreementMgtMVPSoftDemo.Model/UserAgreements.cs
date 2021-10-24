@@ -10,8 +10,8 @@ namespace AgreementMgtMVPSoftDemo.Model
           public string UserId { get; set; }
           public int ProductGroupId { get; set; }
           public int ProductId { get; set; }
-          public Nullable<System.DateTime> EffectiveDate { get; set; }
-          public Nullable<System.DateTime> ExpirationDate { get; set; }
+          public string EffectiveDate { get; set; }
+          public string ExpirationDate { get; set; }
           public Nullable<decimal> NewPrice { get; set; }
           public string ProductNumber { get; set; }
           public string ProductDescription { get; set; }

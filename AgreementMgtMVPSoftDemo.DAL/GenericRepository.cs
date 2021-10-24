@@ -36,13 +36,9 @@ namespace AgreementMgtMVPSoftDemo.DAL
                }
                entities.Update(entity);
           }
-          public void Delete(T entity)
+          public void Delete(string sql)
           {
-               if (entity == null)
-               {
-                    throw new ArgumentNullException("entity");
-               }
-               entities.Remove(entity);
+               context.Database.ExecuteSqlRaw(sql);
           }
           public void Save()
           {

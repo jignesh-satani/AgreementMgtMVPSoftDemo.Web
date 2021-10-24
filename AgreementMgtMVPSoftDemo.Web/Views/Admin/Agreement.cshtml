@@ -62,7 +62,7 @@
      <div class="modal-dialog modal-lg">
           <div class="modal-content">
                <div class="modal-header">
-                    <h5 class="modal-title" id="agreementModalLabel">Edit Agreement</h5>                   
+                    <h5 class="modal-title" id="agreementModalLabel">Edit Agreement</h5>
                </div>
                <div class="modal-body" id="customerBody">
 
@@ -90,21 +90,21 @@
                                    <div class="form-group">
                                         <label>Effective Date</label>
                                         @*<div class="input-group date" id="txtEFDate" data-target-input="nearest">
-                                             <input type="text" class="form-control datetimepicker-input" data-target="#txtEFDate">
-                                             <div class="input-group-append" data-target="#txtEFDate" data-toggle="datetimepicker">
-                                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                             </div>
-                                        </div>*@
+                                                  <input type="text" class="form-control datetimepicker-input" data-target="#txtEFDate">
+                                                  <div class="input-group-append" data-target="#txtEFDate" data-toggle="datetimepicker">
+                                                       <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                  </div>
+                                             </div>*@
                                         <input type="text" name="txtEFDate" id="txtEFDate" class="form-control datepicker" />
                                    </div>
                                    <div class="form-group">
                                         <label>ExpirationDate</label>
                                         @*<div class="input-group date" id="txtEXDate" data-target-input="nearest">
-                                             <input type="text" class="form-control datetimepicker-input" data-target="#txtEXDate">
-                                             <div class="input-group-append" data-target="#txtEXDate" data-toggle="datetimepicker">
-                                                  <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                             </div>
-                                        </div>*@
+                                                  <input type="text" class="form-control datetimepicker-input" data-target="#txtEXDate">
+                                                  <div class="input-group-append" data-target="#txtEXDate" data-toggle="datetimepicker">
+                                                       <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                                  </div>
+                                             </div>*@
                                         <input type="text" name="txtEXDate" id="txtEXDate" class="form-control datepicker" />
                                    </div>
                               </form>
@@ -135,6 +135,8 @@
                     $.each(result, function () {
                          $("#ddlGroup").append('<option value="' + this.id + '">' + this.groupDescription + '</option>');
                     });
+
+                    BindProduct( $("#ddlGroup").val());
                }
           });
      }
@@ -149,7 +151,7 @@
                          $("#ddlProduct").append('<option price="' + this.price + '" value="' + this.id + '">' + this.productDescription + '</option>');
                     });
 
-                    
+                    $("#lblProductPrice").text($("#ddlProduct option:selected").attr("Price"));
                }
           });
      }
@@ -157,7 +159,7 @@
           //$('.datepicker').datepicker({
           //     format: 'mm/dd/yyyy',
           //     startDate: '-3d'
-          //});              
+          //});
 
           //$('#txtEFDate').datetimepicker({
           //     format: 'L'
@@ -198,15 +200,15 @@
                     "type": "POST",
                     "crossDomain": true,
                     "datatype": "json",
-                    "dataSrc": function (json) {                        
-                         $("#hdUserId").val(json.aspNetUser.id);                         
+                    "dataSrc": function (json) {
+                         $("#hdUserId").val(json.aspNetUser.id);
                          return json.data;
                     },
                     error: function (xhr, error, code) {
                          console.log(xhr);
                          console.log(code);
                     }
-               },         
+               },
                "columns": [
                     { "data": "id", "name": "Id", "autoWidth": true, "visible": false },
                     { "data": "userId", "name": "UserId", "autoWidth": true, "visible": false },
@@ -226,15 +228,20 @@
                     { "data": "newPrice", "title": "New Price", "name": "NewPrice", "title": "NewPrice", "autoWidth": true },
                     {
                          "render": function (data, type, full, meta) {
-                              return '<Button id="btnEdit" type="button" class="btn btn-info" data="' + full.Id + '">Edit</Button>';
+                              return '<Button id="btnEdit" type="button" class="btn btn-info" aid="' + full.id + '">Edit</Button>';
                          }
                     },
                     {
-                         data: null, render: function (data, type, row) {
-                              return '<Button id="btnDelete" type="button" class="btn btn-danger" CustomerID="' + row.Id + '">Delete</a>';
+                         "render": function (data, type, full, meta) {
+                              return '<Button id="btnDelete" type="button" class="btn btn-danger" aid="' + full.id + '">Delete</Button>';
                          }
                     }
-
+                    //,
+                    //{
+                    //     data: null, render: function (data, type, row) {
+                    //          return '<Button id="btnDelete" type="button" class="btn btn-danger" Id="' + row.id + '">Delete</a>';
+                    //     }
+                    //}
                ]
 
           });
@@ -246,26 +253,32 @@
                $("#lblProductPrice").text(data.productPrice);
                $("#ddlGroup").val(data.productGroupId);
                $("#txtNewPrice").val(data.newPrice);
+               $("#txtEFDate").val(data.effectiveDate);
+               $("#txtEXDate").val(data.expirationDate);
+
                BindProduct(data.productGroupId);
                $('#agreementModal').modal('show');
 
           });
 
           $(document).on('click', '#btnDelete', function () {
-               var customerID = $(this).attr("customerid");
-
-               $.ajax({
-                    type: "POST",
-                    url: '/NMHEWC/RemoveCustomer?customerID=' + customerID,
-                    //contentType: "application/json; charset=utf-8",
-                    //dataType: "json",
-                    success: function () {
-                         $('#agreementModal').modal('hide');
-                         alert("Record deleted");
-                         $('#demoGrid').DataTable().ajax.reload();
-                    },
-                    error: function () {
-                         alert('Error');
+               var id = $(this).attr("aid");
+               bootbox.confirm("Are you sure want to delete?", function (result) {
+                    if (result) {
+                         $.ajax({
+                              type: "POST",
+                              url: apiURL + "/Agreement/DeleteAgreement?id=" + id,
+                              contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                              success: function () {
+                                   $('#agreementModal').modal('hide');
+                                   alert("Record deleted");
+                                   $('#demoGrid').DataTable().ajax.reload();
+                              },
+                              error: function () {
+                                   alert('Error');
+                              }
+                         });
                     }
                });
           });
@@ -306,15 +319,21 @@
 
           $(document).on('click', '#btnAdd', function () {
                $("#hdId").val('0');
+               $("#ddlProduct").val('0');
+               $("#ddlGroup").val('0');
+               $("#txtEFDate").val('');
+               $("#txtEXDate").val('');
+               $("#txtNewPrice").val('');
+               $("#lblProductPrice").text('');
                $('#agreementModal').modal('show');
           });
 
           $("#ddlGroup").change(function () {
                BindProduct($('option:selected', this).val());
           });
-          $("#ddlProduct").change(function () {               
+          $("#ddlProduct").change(function () {
                $("#lblProductPrice").text($("#ddlProduct option:selected").attr("Price"));
-          });         
+          });
 
      });
 
