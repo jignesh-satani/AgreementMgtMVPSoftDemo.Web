@@ -217,15 +217,15 @@
                     { "data": "productGroupId", "name": "ProductGroupId", "autoWidth": true, "visible": false },
                     { "data": "groupCode", "name": "GroupCode", "autoWidth": true, "visible": false },
 
-                    { "data": "firstName", "title": "First Name", "name": "FirstName", "autoWidth": true },
-                    { "data": "lastName", "title": "Last Name", "name": "LastName", "autoWidth": true },
-                    { "data": "email", "title": "Email", "name": "Email", "autoWidth": true },
-                    { "data": "effectiveDate", "title": "Effective Date", "name": "EffectiveDate", "autoWidth": true },
-                    { "data": "expirationDate", "title": "Expiration Date", "name": "ExpirationDate", "autoWidth": true },
+                    { "data": "firstName", "title": "First Name", "name": "FirstName", "autoWidth": true, "orderable": false },
+                    { "data": "lastName", "title": "Last Name", "name": "LastName", "autoWidth": true, "orderable": false },
+                    { "data": "email", "title": "Email", "name": "Email", "autoWidth": true, "orderable": false },
+                    { "data": "effectiveDate", "title": "Effective Date", "name": "EffectiveDate", "autoWidth": true, "orderable": false },
+                    { "data": "expirationDate", "title": "Expiration Date", "name": "ExpirationDate", "autoWidth": true, "orderable": false },
                     { "data": "productDescription", "title": "Product", "name": "ProductDescription", "autoWidth": true },
                     { "data": "productPrice", "title": "Product Price", "name": "ProductPrice", "autoWidth": true },
-                    { "data": "groupDescription", "title": "Group", "name": "GroupDescription", "title": "GroupDescription", "autoWidth": true },
-                    { "data": "newPrice", "title": "New Price", "name": "NewPrice", "title": "NewPrice", "autoWidth": true },
+                    { "data": "groupDescription", "title": "Group", "name": "GroupDescription", "title": "GroupDescription", "autoWidth": true, "orderable": false },
+                    { "data": "newPrice", "title": "New Price", "name": "NewPrice", "title": "NewPrice", "autoWidth": true, "orderable": false },
                     {
                          "render": function (data, type, full, meta) {
                               return '<Button id="btnEdit" type="button" class="btn btn-info" aid="' + full.id + '">Edit</Button>';
@@ -272,11 +272,11 @@
                               dataType: "json",
                               success: function () {
                                    $('#agreementModal').modal('hide');
-                                   alert("Record deleted");
+                                   bootbox.alert("Record deleted");
                                    $('#demoGrid').DataTable().ajax.reload();
                               },
                               error: function () {
-                                   alert('Error');
+                                   bootbox.alert("Error");
                               }
                          });
                     }
@@ -285,6 +285,21 @@
 
           $(document).on('click', '#btnSave', function () {
                var message = "";
+               
+               if ($("#ddlProduct").val() == '' || $("#ddlProduct").val() == null)
+                    message = "Please select product";
+               if ($("#txtEFDate").val() == '')
+                    message = message + "</br>" + "Please select Effective Date";
+               if ($("#txtEXDate").val() == '')
+                    message = message + "</br>" +"Please select Expiration Date";
+               if ($("#txtNewPrice").val() == '' || $("#txtNewPrice").val() == '0')
+                    message = message + "</br>" +"Please select new price";
+
+               if (message.length > 0) {
+                    bootbox.alert(message);
+                    return false;
+               }
+
                if ($("#hdId").val() == '0')
                     message = "New record inserted";
                else
@@ -308,11 +323,11 @@
                     dataType: "json",
                     success: function () {
                          $('#agreementModal').modal('hide');
-                         alert(message);
+                         bootbox.alert(message);
                          $('#demoGrid').DataTable().ajax.reload();
                     },
                     error: function () {
-                         alert('Error');
+                         bootbox.alert("Error");
                     }
                });
           });

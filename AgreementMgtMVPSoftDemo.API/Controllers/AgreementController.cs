@@ -77,24 +77,18 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                {
                     switch (sortColumn)
                     {
-                         case "FirstName":
+                         case "ProductPrice":
                               if (sortColumnDir == "desc")
-                                   customerData = customerData.OrderByDescending(s => s.FirstName);
+                                   customerData = customerData.OrderByDescending(s => s.ProductPrice);
                               else
-                                   customerData = customerData.OrderBy(s => s.FirstName);
+                                   customerData = customerData.OrderBy(s => s.ProductPrice);
                               break;
-                         case "LastName":
+                         case "NewPrice":
                               if (sortColumnDir == "desc")
-                                   customerData = customerData.OrderByDescending(s => s.LastName);
+                                   customerData = customerData.OrderByDescending(s => s.NewPrice);
                               else
-                                   customerData = customerData.OrderBy(s => s.LastName);
-                              break;
-                         case "Email":
-                              if (sortColumnDir == "desc")
-                                   customerData = customerData.OrderByDescending(s => s.Email);
-                              else
-                                   customerData = customerData.OrderBy(s => s.Email);
-                              break;
+                                   customerData = customerData.OrderBy(s => s.NewPrice);
+                              break;                        
                          case "ProductDescription":
                               if (sortColumnDir == "desc")
                                    customerData = customerData.OrderByDescending(s => s.ProductDescription);
@@ -117,9 +111,11 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                }
 
                //total number of rows count     
+
+               //Paging
                recordsTotal = customerData.Count();
-               //Paging     
-               var data = customerData.Skip(skip).Take(pageSize).ToList();
+               var data = customerData.Skip(skip).Take(pageSize).ToList();               
+
                var user = _iUserRepository.Get(email);
                //Returning Json Data    
                return new JsonResult(new DataTableResponse<UserAgreements>()
@@ -127,7 +123,7 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                     draw = draw,
                     recordsFiltered = recordsTotal,
                     recordsTotal = recordsTotal,
-                    data = customerData,
+                    data = data,
                     aspNetUser = user
                });
           }
