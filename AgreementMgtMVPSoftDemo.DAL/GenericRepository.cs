@@ -2,15 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace AgreementMgtMVPSoftDemo.DAL
 {
      public class GenericRepository<T>: IGenericRepository<T> where T:class
      {
           private readonly ApplicationContext context;
-          private DbSet<T> entities;
-          string errorMessage = string.Empty;
+          private readonly DbSet<T> entities;
+          
           public GenericRepository(ApplicationContext context)
           {
                this.context = context;

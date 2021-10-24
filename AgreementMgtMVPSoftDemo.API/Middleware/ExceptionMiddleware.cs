@@ -25,7 +25,7 @@ namespace AgreementMgtMVPSoftDemo.API.Middleware
                }
                catch (AccessViolationException avEx)
                {
-                    //_logger.LogError($"A new violation exception has been thrown: {avEx}");
+                    //_logger.LogError(avEx.Message);
                     await HandleExceptionAsync(httpContext, avEx);
                }
                catch (Exception ex)

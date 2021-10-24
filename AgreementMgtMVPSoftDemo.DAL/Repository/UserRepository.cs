@@ -1,8 +1,5 @@
 ﻿using AgreementMgtMVPSoftDemo.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AgreementMgtMVPSoftDemo.DAL
 {
@@ -10,7 +7,7 @@ namespace AgreementMgtMVPSoftDemo.DAL
      {
           private readonly ApplicationContext context;
           //private DbSet<AspNetUsers> entities;
-          string errorMessage = string.Empty;
+          
           public UserRepository(ApplicationContext context)
           {
                this.context = context;

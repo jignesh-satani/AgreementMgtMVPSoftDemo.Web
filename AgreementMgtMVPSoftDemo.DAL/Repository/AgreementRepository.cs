@@ -8,11 +8,9 @@ namespace AgreementMgtMVPSoftDemo.DAL
      public class AgreementRepository : IAgreementRepository
      {
           private readonly ApplicationContext _context;
-          private DbSet<UserAgreements> entities;
           public AgreementRepository(ApplicationContext context)
           {
                _context = context;
-               entities = context.Set<UserAgreements>();
           }
           public IEnumerable<UserAgreements> GetUserAgreements(string email)
           {
