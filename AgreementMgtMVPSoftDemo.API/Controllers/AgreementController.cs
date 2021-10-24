@@ -107,7 +107,7 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                //Search    
                if (!string.IsNullOrEmpty(searchValue))
                {
-                    customerData = customerData.Where(m => m.FirstName.ToLower().Contains(searchValue.ToLower()));
+                    customerData = customerData.Where(m => m.ProductDescription.ToLower().Contains(searchValue.ToLower()));
                }
 
                //total number of rows count     
