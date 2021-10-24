@@ -75,6 +75,7 @@ namespace AgreementMgtMVPSoftDemo.API
                 .AllowCredentials()); // allow credentials  
                app.UseHttpsRedirection();
                app.UseRouting();
+               app.ConfigureCustomExceptionMiddleware();
                app.UseAuthorization();
                app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
                app.UseSwagger();
