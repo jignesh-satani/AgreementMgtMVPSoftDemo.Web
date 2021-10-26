@@ -18,7 +18,7 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
           private readonly IAgreementRepository _userAgreementsrepository;
           private readonly IUserRepository _iUserRepository;
           private readonly IMemoryCache _memoryCache;
-          //private readonly MemoryCache _iCacheHelper;
+          private readonly ICacheHelper _iCacheHelper;
 
           public AgreementController(IGenericRepository<ProductGroup> productGroupRepository
                , IGenericRepository<Product> productRepository
@@ -34,7 +34,7 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
                _iUserRepository = iUserRepository;
                _userAgreementsrepository = userAgreementsrepository;
                _memoryCache = memoryCache;
-               //_iCacheHelper = ICacheHelper;
+               _iCacheHelper = ICacheHelper;
 
           }
 
@@ -50,52 +50,13 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
 
           [HttpGet("GetProductGroup")]
           public IEnumerable<ProductGroup> GetProductGroup()
-          {
-          //     var cacheKey = "productGroupList";
-          //     if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<ProductGroup> productGroupList))
-          //     {
-          //          //calling the server
-          //          productGroupList = _productGroupRepository.GetAll();
-
-          //          //setting up cache options
-          //          //var cacheExpiryOptions = new MemoryCacheEntryOptions
-          //          //{
-          //          //     AbsoluteExpiration = DateTime.Now.AddSeconds(50),
-          //          //     Priority = CacheItemPriority.High,
-          //          //     SlidingExpiration = TimeSpan.FromSeconds(20)
-          //          //};
-          //          var cacheExpiryOptions = new MemoryCacheEntryOptions()
-          //.SetSlidingExpiration(TimeSpan.FromSeconds(3600));
-          //          _memoryCache.Set(cacheKey, productGroupList, cacheExpiryOptions);
-          //     }
-          //     return productGroupList;
-
-               return _productGroupRepository.GetAll();
-               //return _iCacheHelper.GetProductGroup(_memoryCache, _productGroupRepository);
+          {          
+               return _iCacheHelper.GetProductGroup(_memoryCache, _productGroupRepository);
           }
           [HttpPost("GetProduct")]
           public IEnumerable<Product> GetProduct(int groupId)
-          {
-               //   var cacheKey = "productList";
-               //   if (!_memoryCache.TryGetValue(cacheKey, out IEnumerable<Product> productList))
-               //   {
-               //        //calling the server
-               //        productList = _productRepository.GetAll();
-
-               //        //setting up cache options
-               //        //var cacheExpiryOptions = new MemoryCacheEntryOptions
-               //        //{
-               //        //     AbsoluteExpiration = DateTime.Now.AddSeconds(50),
-               //        //     Priority = CacheItemPriority.High,
-               //        //     SlidingExpiration = TimeSpan.FromSeconds(20)
-               //        //};
-               //        var cacheExpiryOptions = new MemoryCacheEntryOptions()
-               //.SetSlidingExpiration(TimeSpan.FromSeconds(3600));
-               //        _memoryCache.Set(cacheKey, productList, cacheExpiryOptions);
-               //   }
-               //   return productList;
-               return _productRepository.GetAll().Where(t => t.ProductGroupId == groupId);
-               //return _iCacheHelper.GetProducts(_memoryCache, _productRepository).Where(t => t.ProductGroupId == groupId);
+          {            
+               return _iCacheHelper.GetProducts(_memoryCache, _productRepository).Where(t => t.ProductGroupId == groupId);
           }
 
           [HttpPost("LoadGrid")]

@@ -42,7 +42,7 @@ namespace AgreementMgtMVPSoftDemo.API
                services.AddTransient<IGenericRepository<Agreement>, GenericRepository<Agreement>>();
                services.AddTransient<IAgreementRepository, AgreementRepository>();
                services.AddTransient<ILoggerManager, LoggerManager>();
-               services.AddTransient<ICacheHelper, CacheHelper>();
+               services.AddSingleton<ICacheHelper, CacheHelper>();
 
                services.AddControllers().AddNewtonsoftJson();
                
