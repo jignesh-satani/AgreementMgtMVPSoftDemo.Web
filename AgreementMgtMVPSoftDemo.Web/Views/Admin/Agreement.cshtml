@@ -130,13 +130,16 @@
           $.ajax({
                type: 'GET',
                url: apiURL + "/Agreement/GetProductGroup",
+               headers: {
+                    Authorization: 'Bearer ' + $("#hdToken").val()
+               },
                dataType: 'json',
                success: function (result) {
                     $.each(result, function () {
                          $("#ddlGroup").append('<option value="' + this.id + '">' + this.groupDescription + '</option>');
                     });
 
-                    BindProduct( $("#ddlGroup").val());
+                    BindProduct($("#ddlGroup").val());
                }
           });
      }
@@ -144,6 +147,9 @@
           $.ajax({
                type: 'POST',
                url: apiURL + "/Agreement/GetProduct?groupId=" + id,
+               headers: {
+                    Authorization: 'Bearer ' + $("#hdToken").val()
+               },
                dataType: 'json',
                success: function (result) {
                     $("#ddlProduct").html('');
@@ -166,8 +172,7 @@
           //});
           //$('#txtEXDate').datetimepicker({
           //     format: 'L'
-          //});
-
+          //});          
           $('input[name="txtEFDate"]').daterangepicker({
                singleDatePicker: true,
                showDropdowns: true,
@@ -285,15 +290,15 @@
 
           $(document).on('click', '#btnSave', function () {
                var message = "";
-               
+
                if ($("#ddlProduct").val() == '' || $("#ddlProduct").val() == null)
                     message = "Please select product";
                if ($("#txtEFDate").val() == '')
                     message = message + "</br>" + "Please select Effective Date";
                if ($("#txtEXDate").val() == '')
-                    message = message + "</br>" +"Please select Expiration Date";
+                    message = message + "</br>" + "Please select Expiration Date";
                if ($("#txtNewPrice").val() == '' || $("#txtNewPrice").val() == '0')
-                    message = message + "</br>" +"Please select new price";
+                    message = message + "</br>" + "Please select new price";
 
                if (message.length > 0) {
                     bootbox.alert(message);
@@ -314,7 +319,7 @@
                     'ExpirationDate': $("#txtEXDate").val(),
                     'NewPrice': $("#txtNewPrice").val()
                };
-//               debugger;
+               //               debugger;
                $.ajax({
                     type: "POST",
                     url: apiURL + "/Agreement/SaveAgreement",

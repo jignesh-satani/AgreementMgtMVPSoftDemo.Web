@@ -1,12 +1,9 @@
 ﻿using AgreementMgtMVPSoftDemo.API.Auth;
+using AgreementMgtMVPSoftDemo.API.Model;
 using AgreementMgtMVPSoftDemo.DAL;
 using AgreementMgtMVPSoftDemo.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AgreementMgtMVPSoftDemo.API.Controllers
 {
@@ -23,21 +20,25 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
           }
 
           //[HttpPost("Authentication/{username}/{password}")]
+          [AllowAnonymous]
           [HttpPost("Authentication")]
-          public IActionResult Authentication([FromBody] AspNetUsers user)
+          public IActionResult Authentication(AspNetUsers user)
           {
                AspNetUsers userCredential = _IUserRepository.Get(user.Email, user.PasswordHash);
 
                if (userCredential == null)
-                    return new JsonResult(new TokenResponse() { Success = false, Message = "InvalidToken" });
+                    return BadRequest(new { message = "Username or password is incorrect" });
 
-               var token = _jwtAuth.GetToken(userCredential.UserName);
-               if (token == null)
-                    return new JsonResult(new TokenResponse() { Success = false, Message = "InvalidToken" });
+               var response = _jwtAuth.GetToken(new User()
+               {
+                    Username = userCredential.Email,
+                    FirstName = userCredential.FirstName,
+                    LastName = userCredential.LastName,                    
+               });
+               if (response == null)
+                    return BadRequest(new { message = "Username or password is incorrect" });
 
-               return new JsonResult(new TokenResponse() { Success = true, Message = "Success"
-                    , UserEmail= userCredential.Email
-                    , Token = token });
+               return Ok(response);
           }
      }
 }

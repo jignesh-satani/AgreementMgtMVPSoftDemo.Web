@@ -1,4 +1,5 @@
-﻿using AgreementMgtMVPSoftDemo.DAL;
+﻿using AgreementMgtMVPSoftDemo.API.Middleware;
+using AgreementMgtMVPSoftDemo.DAL;
 using AgreementMgtMVPSoftDemo.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -47,12 +48,13 @@ namespace AgreementMgtMVPSoftDemo.API.Controllers
 
           //     return new { productgroups, products };
           //}
-
+          [Authorize]
           [HttpGet("GetProductGroup")]
           public IEnumerable<ProductGroup> GetProductGroup()
           {          
                return _iCacheHelper.GetProductGroup(_memoryCache, _productGroupRepository);
           }
+          [Authorize]
           [HttpPost("GetProduct")]
           public IEnumerable<Product> GetProduct(int groupId)
           {            

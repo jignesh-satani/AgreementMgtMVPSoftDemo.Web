@@ -13,10 +13,11 @@ namespace AgreementMgtMVPSoftDemo.Web.Controllers
                ViewData["page"] = "Customer";
                return View("customer");
           }
-          public IActionResult Agreement(string email)
+          public IActionResult Agreement(string email, string token)
           {
                ViewData["page"] = "Agreement";
                ViewData["email"] = email;
+               ViewData["token"] = token;
                return View("Agreement");
           }
 

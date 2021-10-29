@@ -1,7 +1,10 @@
-﻿using AgreementMgtMVPSoftDemo.DAL;
+﻿using AgreementMgtMVPSoftDemo.API.Model;
+using AgreementMgtMVPSoftDemo.DAL;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using System;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace AgreementMgtMVPSoftDemo.API.Middleware
@@ -30,7 +33,7 @@ namespace AgreementMgtMVPSoftDemo.API.Middleware
                }
                catch (Exception ex)
                {
-               //log error
+                    //log error
                     await HandleExceptionAsync(httpContext, ex);
                }
           }
@@ -40,7 +43,14 @@ namespace AgreementMgtMVPSoftDemo.API.Middleware
                context.Response.ContentType = "application/json";
                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
+               var controllerActionDescriptor = context
+                .GetEndpoint().Metadata.GetMetadata<ControllerActionDescriptor>();
+
+               var controllerName = controllerActionDescriptor.ControllerName;
+               var actionName = controllerActionDescriptor.ActionName;
                var message = "Internal Server Error from the custom middleware";
+
+               var user = context.Request.HttpContext.Items["Email"];
 
                await context.Response.WriteAsync(new ErrorDetails()
                {

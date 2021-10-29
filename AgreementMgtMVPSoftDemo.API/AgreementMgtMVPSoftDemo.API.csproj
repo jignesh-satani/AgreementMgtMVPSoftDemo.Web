@@ -18,5 +18,9 @@
     <ProjectReference Include="..\AgreementMgtMVPSoftDemo.Model\AgreementMgtMVPSoftDemo.Model.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Servies\" />
+  </ItemGroup>
+
 
 </Project>

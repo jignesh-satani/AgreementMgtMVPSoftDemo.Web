@@ -83,13 +83,13 @@
                contentType: "application/json; charset=utf-8",
                dataType: 'json',
                async: true,
-               url: apiURL + "/Login/Authentication",
-               //xhrFields: {
-               //     withCredentials: true
+               //headers: {
+               //     Authorization: 'Bearer ' + token
                //},
+               url: apiURL + "/Login/Authentication",             
                success: function (data) {
-                    if (data.success) {                                                  
-                         var url = "/Admin/Agreement?email=" + data.userEmail;                         
+                    if (data.token != null) {
+                         var url = "/Admin/Agreement?email=" + data.username + "&token=" + data.token;
                          window.location.href = url;
                     }
                     else {

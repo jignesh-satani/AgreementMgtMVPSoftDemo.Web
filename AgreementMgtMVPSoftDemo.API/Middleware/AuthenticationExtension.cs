@@ -28,10 +28,10 @@ namespace AgreementMgtMVPSoftDemo.API.Middleware
                     {
                          IssuerSigningKey = new SymmetricSecurityKey(key),
                          ValidateIssuer = false,
-                         ValidateAudience = false,
-                      // ValidIssuer = "localhost",
-                      //ValidAudience = "localhost"
-                 };
+                         ValidateAudience = false
+                         // ValidIssuer = "localhost",
+                         //ValidAudience = "localhost"
+                    };
                });
 
                return services;

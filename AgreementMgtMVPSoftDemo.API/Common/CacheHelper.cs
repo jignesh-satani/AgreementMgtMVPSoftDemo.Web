@@ -32,7 +32,7 @@ namespace AgreementMgtMVPSoftDemo.API
                     //setting up cache options
                     var cacheExpiryOptions = new MemoryCacheEntryOptions()
                                              .SetSlidingExpiration(TimeSpan.FromSeconds(3600));
-                    _memoryCache.Set(_productGroupList, productGroupList.ToList(), cacheExpiryOptions);
+                    _memoryCache.Set(_productGroupList, productGroupList, cacheExpiryOptions);
                }
                return productGroupList;
           }
@@ -47,7 +47,7 @@ namespace AgreementMgtMVPSoftDemo.API
                     //setting up cache options
                     var cacheExpiryOptions = new MemoryCacheEntryOptions()
                                                   .SetSlidingExpiration(TimeSpan.FromSeconds(3600));
-                    _memoryCache.Set(_productList, productList.ToList(), cacheExpiryOptions);
+                    _memoryCache.Set(_productList, productList, cacheExpiryOptions);
                }
                return productList;
           }
