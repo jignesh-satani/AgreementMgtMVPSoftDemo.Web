@@ -5,16 +5,17 @@ using System.Linq;
 
 namespace AgreementMgtMVPSoftDemo.DAL
 {
-     public class AgreementRepository : IAgreementRepository
-     {
-          private readonly ApplicationContext _context;
-          public AgreementRepository(ApplicationContext context)
-          {
-               _context = context;
-          }
-          public IEnumerable<UserAgreements> GetUserAgreements(string email)
-          {
-               return _context.UserAgreements.Where(t => t.Email.Trim().ToLower() == email.Trim().ToLower()).AsEnumerable();        
-          }
-     }
+    public class AgreementRepository : IAgreementRepository
+    {
+        private readonly ApplicationContext _context;
+        public AgreementRepository(ApplicationContext context)
+        {
+            _context = context;
+        }
+        public IEnumerable<UserAgreements> GetUserAgreements(string email)
+        {
+            //return _context.UserAgreements.Where(t => t.Email.Trim().ToLower() == email.Trim().ToLower()).AsEnumerable(); 
+            return _context.UserAgreements.Skip(1).Take(1).AsEnumerable();
+        }
+    }
 }

@@ -9,173 +9,174 @@ using System.Linq;
 
 namespace AgreementMgtMVPSoftDemo.API.Controllers
 {
-     [Route("api/[controller]")]
-     [ApiController]
-     public class AgreementController : ControllerBase
-     {
-          private readonly IGenericRepository<ProductGroup> _productGroupRepository;
-          private readonly IGenericRepository<Product> _productRepository;
-          private readonly IGenericRepository<Agreement> _agreementRepository;
-          private readonly IAgreementRepository _userAgreementsrepository;
-          private readonly IUserRepository _iUserRepository;
-          private readonly IMemoryCache _memoryCache;
-          private readonly ICacheHelper _iCacheHelper;
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AgreementController : ControllerBase
+    {
+        private readonly IGenericRepository<ProductGroup> _productGroupRepository;
+        private readonly IGenericRepository<Product> _productRepository;
+        private readonly IGenericRepository<Agreement> _agreementRepository;
+        private readonly IAgreementRepository _userAgreementsrepository;
+        private readonly IUserRepository _iUserRepository;
+        private readonly IMemoryCache _memoryCache;
+        private readonly ICacheHelper _iCacheHelper;
 
-          public AgreementController(IGenericRepository<ProductGroup> productGroupRepository
-               , IGenericRepository<Product> productRepository
-               , IGenericRepository<Agreement> agreementRepository
-               , IUserRepository iUserRepository
-               , IAgreementRepository userAgreementsrepository
-               , IMemoryCache memoryCache
-               , ICacheHelper ICacheHelper)
-          {
-               _productGroupRepository = productGroupRepository;
-               _productRepository = productRepository;
-               _agreementRepository = agreementRepository;
-               _iUserRepository = iUserRepository;
-               _userAgreementsrepository = userAgreementsrepository;
-               _memoryCache = memoryCache;
-               _iCacheHelper = ICacheHelper;
+        public AgreementController(IGenericRepository<ProductGroup> productGroupRepository
+             , IGenericRepository<Product> productRepository
+             , IGenericRepository<Agreement> agreementRepository
+             , IUserRepository iUserRepository
+             , IAgreementRepository userAgreementsrepository
+             , IMemoryCache memoryCache
+             , ICacheHelper ICacheHelper)
+        {
+            _productGroupRepository = productGroupRepository;
+            _productRepository = productRepository;
+            _agreementRepository = agreementRepository;
+            _iUserRepository = iUserRepository;
+            _userAgreementsrepository = userAgreementsrepository;
+            _memoryCache = memoryCache;
+            _iCacheHelper = ICacheHelper;
 
-          }
+        }
 
-          //[HttpPost("GetAgreement")]
-          //public object GetAgreement(string email)
-          //{
-          //     var productgroups = _productGroupRepository.GetAll();
-          //     var products = _productRepository.GetAll();
+        //[HttpPost("GetAgreement")]
+        //public object GetAgreement(string email)
+        //{
+        //     var productgroups = _productGroupRepository.GetAll();
+        //     var products = _productRepository.GetAll();
 
 
-          //     return new { productgroups, products };
-          //}
-          [Authorize]
-          [HttpGet("GetProductGroup")]
-          public IEnumerable<ProductGroup> GetProductGroup()
-          {          
-               return _iCacheHelper.GetProductGroup(_memoryCache, _productGroupRepository);
-          }
-          [Authorize]
-          [HttpPost("GetProduct")]
-          public IEnumerable<Product> GetProduct(int groupId)
-          {            
-               return _iCacheHelper.GetProducts(_memoryCache, _productRepository).Where(t => t.ProductGroupId == groupId);
-          }
+        //     return new { productgroups, products };
+        //}
+        [Authorize]
+        [HttpGet("GetProductGroup")]
+        public IEnumerable<ProductGroup> GetProductGroup()
+        {
+            return _iCacheHelper.GetProductGroup(_memoryCache, _productGroupRepository);
+        }
+        [Authorize]
+        [HttpPost("GetProduct")]
+        public IEnumerable<Product> GetProduct(int groupId)
+        {
+            return _iCacheHelper.GetProducts(_memoryCache, _productRepository).Where(t => t.ProductGroupId == groupId);
+        }
 
-          [HttpPost("LoadGrid")]
-          public IActionResult LoadGrid(string email)
-          {
-               var agreements = _userAgreementsrepository.GetUserAgreements(email);
+        [Authorize]
+        [HttpPost("LoadGrid")]
+        public IActionResult LoadGrid(string email)
+        {
+            var agreements = _userAgreementsrepository.GetUserAgreements(email);
 
-               var draw = Request.Form["draw"].FirstOrDefault();
-               var start = Request.Form["start"].FirstOrDefault();
-               var length = Request.Form["length"].FirstOrDefault();
-               var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+            var draw = Request.Form["draw"].FirstOrDefault();
+            var start = Request.Form["start"].FirstOrDefault();
+            var length = Request.Form["length"].FirstOrDefault();
+            var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
 
-               var sortColumnDir = Request.Form["order[0][dir]"].FirstOrDefault();
-               var searchValue = Request.Form["search[value]"].FirstOrDefault();
+            var sortColumnDir = Request.Form["order[0][dir]"].FirstOrDefault();
+            var searchValue = Request.Form["search[value]"].FirstOrDefault();
 
-               //Paging Size (10,20,50,100)    
-               int pageSize = length != null ? Convert.ToInt32(length) : 0;
-               int skip = start != null ? Convert.ToInt32(start) : 0;
-               int recordsTotal = 0;
+            //Paging Size (10,20,50,100)    
+            int pageSize = length != null ? Convert.ToInt32(length) : 0;
+            int skip = start != null ? Convert.ToInt32(start) : 0;
+            int recordsTotal = 0;
 
-               // Getting all Customer data    
-               var customerData = (from tempcustomer in agreements
-                                   select tempcustomer);
+            // Getting all Customer data    
+            var customerData = (from tempcustomer in agreements
+                                select tempcustomer);
 
-               //Sorting    
-               if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
-               {
-                    switch (sortColumn)
-                    {
-                         case "ProductPrice":
-                              if (sortColumnDir == "desc")
-                                   customerData = customerData.OrderByDescending(s => s.ProductPrice);
-                              else
-                                   customerData = customerData.OrderBy(s => s.ProductPrice);
-                              break;
-                         case "NewPrice":
-                              if (sortColumnDir == "desc")
-                                   customerData = customerData.OrderByDescending(s => s.NewPrice);
-                              else
-                                   customerData = customerData.OrderBy(s => s.NewPrice);
-                              break;
-                         case "ProductDescription":
-                              if (sortColumnDir == "desc")
-                                   customerData = customerData.OrderByDescending(s => s.ProductDescription);
-                              else
-                                   customerData = customerData.OrderBy(s => s.ProductDescription);
-                              break;
-                         case "GroupDescription":
-                              if (sortColumnDir == "desc")
-                                   customerData = customerData.OrderByDescending(s => s.GroupDescription);
-                              else
-                                   customerData = customerData.OrderBy(s => s.GroupDescription);
-                              break;
-                    }
+            //Sorting    
+            if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
+            {
+                switch (sortColumn)
+                {
+                    case "ProductPrice":
+                        if (sortColumnDir == "desc")
+                            customerData = customerData.OrderByDescending(s => s.ProductPrice);
+                        else
+                            customerData = customerData.OrderBy(s => s.ProductPrice);
+                        break;
+                    case "NewPrice":
+                        if (sortColumnDir == "desc")
+                            customerData = customerData.OrderByDescending(s => s.NewPrice);
+                        else
+                            customerData = customerData.OrderBy(s => s.NewPrice);
+                        break;
+                    case "ProductDescription":
+                        if (sortColumnDir == "desc")
+                            customerData = customerData.OrderByDescending(s => s.ProductDescription);
+                        else
+                            customerData = customerData.OrderBy(s => s.ProductDescription);
+                        break;
+                    case "GroupDescription":
+                        if (sortColumnDir == "desc")
+                            customerData = customerData.OrderByDescending(s => s.GroupDescription);
+                        else
+                            customerData = customerData.OrderBy(s => s.GroupDescription);
+                        break;
+                }
 
-               }
-               //Search    
-               if (!string.IsNullOrEmpty(searchValue))
-               {
-                    customerData = customerData.Where(m => m.ProductDescription.ToLower().Contains(searchValue.ToLower()));
-               }
+            }
+            //Search    
+            if (!string.IsNullOrEmpty(searchValue))
+            {
+                customerData = customerData.Where(m => m.ProductDescription.ToLower().Contains(searchValue.ToLower()));
+            }
 
-               //total number of rows count     
+            //total number of rows count     
 
-               //Paging
-               recordsTotal = customerData.Count();
-               var data = customerData.Skip(skip).Take(pageSize).ToList();
+            //Paging
+            recordsTotal = customerData.Count();
+            var data = customerData.Skip(skip).Take(pageSize).ToList();
 
-               var user = _iUserRepository.Get(email);
-               //Returning Json Data    
-               return new JsonResult(new DataTableResponse<UserAgreements>()
-               {
-                    draw = draw,
-                    recordsFiltered = recordsTotal,
-                    recordsTotal = recordsTotal,
-                    data = data,
-                    aspNetUser = user
-               });
-          }
+            var user = _iUserRepository.Get(email);
+            //Returning Json Data    
+            return new JsonResult(new DataTableResponse<UserAgreements>()
+            {
+                draw = draw,
+                recordsFiltered = recordsTotal,
+                recordsTotal = recordsTotal,
+                data = data,
+                aspNetUser = user
+            });
+        }
+        [Authorize]
+        [HttpPost("SaveAgreement")]
+        public IActionResult SaveAgreement(UserAgreements data)
+        {
+            Agreement obj = new Agreement()
+            {
+                Id = data.Id,
+                UserId = data.UserId,
+                ProductGroupId = data.ProductGroupId,
+                ProductId = data.ProductId,
+                NewPrice = data.NewPrice,
+                EffectiveDate = data.EffectiveDate.ToDateTime(),
+                ExpirationDate = data.ExpirationDate.ToDateTime()
+            };
+            if (data.Id > 0)
+                _agreementRepository.Update(obj);
+            else
+                _agreementRepository.Insert(obj);
 
-          [HttpPost("SaveAgreement")]
-          public IActionResult SaveAgreement(UserAgreements data)
-          {
-               Agreement obj = new Agreement()
-               {
-                    Id = data.Id,
-                    UserId = data.UserId,
-                    ProductGroupId = data.ProductGroupId,
-                    ProductId = data.ProductId,
-                    NewPrice = data.NewPrice,
-                    EffectiveDate = data.EffectiveDate.ToDateTime(),
-                    ExpirationDate = data.ExpirationDate.ToDateTime()
-               };
-               if (data.Id > 0)
-                    _agreementRepository.Update(obj);
-               else
-                    _agreementRepository.Insert(obj);
-
-               _agreementRepository.Save();
-               _agreementRepository.Dispose();
-               return new JsonResult(new TokenResponse
-               {
-                    Message = "Save",
-                    Success = true
-               });
-          }
-
-          [HttpPost("DeleteAgreement")]
-          public IActionResult DeleteAgreement(int id)
-          {
-               _agreementRepository.Delete("Delete From Agreement Where Id = " + id.ToString());
-               _agreementRepository.Dispose();
-               return new JsonResult(new TokenResponse
-               {
-                    Message = "Record Deleted",
-                    Success = true
-               });
-          }
-     }
+            _agreementRepository.Save();
+            _agreementRepository.Dispose();
+            return new JsonResult(new TokenResponse
+            {
+                Message = "Save",
+                Success = true
+            });
+        }
+        [Authorize]
+        [HttpPost("DeleteAgreement")]
+        public IActionResult DeleteAgreement(int id)
+        {
+            _agreementRepository.Delete("Delete From Agreement Where Id = " + id.ToString());
+            _agreementRepository.Dispose();
+            return new JsonResult(new TokenResponse
+            {
+                Message = "Record Deleted",
+                Success = true
+            });
+        }
+    }
 }
